@@ -1,0 +1,1 @@
+""" This document complies all functions to do the tensorflow training """
