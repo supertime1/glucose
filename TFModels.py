@@ -124,18 +124,18 @@ class RNNEncoder(Model):
     def __init__(self, input_shape: Tuple) -> None:
        super(RNNEncoder, self).__init__()
        self.input_data_shape = input_shape
-       self.rnn_encoder_model = self.rnn_encoder_model() 
+       self.encoder = self.rnn_encoder_model() 
 
     def rnn_encoder_model(self):
         X_input = Input(self.input_data_shape)
-        X = Bidirectional(LSTM(32, return_sequences = True))(X_input)
-        X = Bidirectional(LSTM(32, return_sequences = True))(X)
-        X = Dense(self.input_shape[0], activation='relu')(X)
+        X = Bidirectional(LSTM(32, return_sequences=True))(X_input)
+        X = Bidirectional(LSTM(32, return_sequences=True))(X)
+        X = Dense(1, activation='relu')(X)
         model = Model(inputs=X_input, outputs=X, name='RNNEncoder')
         return model
     
     def call(self, x):
-        return self.rnn_encoder_model(x)
+        return self.encoder(x)
     
 class RNNEncoderDecoder(Model):
   def __init__(self, latent_dim, num_of_labels):

@@ -18,10 +18,10 @@ class ModelForTraining(Enum):
 class TrainingHyperparameters(Enum):
     LEARNING_RATE = 0.001
     LOSS = tf.keras.losses.MeanSquaredError()
+    OPTIMIZER = tf.keras.optimizers.Adam(LEARNING_RATE)
     METRICS = ['mae']
-    OPTIMIZER = tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE)    
     PATIENCE = 20
-    EPOCH = 200
+    EPOCH = 1
     BATCH_SIZE = 128
 
 class TFConsts:
