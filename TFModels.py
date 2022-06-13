@@ -2,7 +2,6 @@ import tensorflow as tf
 from tensorflow.keras.layers import Dense, Dropout, Input, Bidirectional, LSTM, Conv1D, BatchNormalization, Activation, Add, ZeroPadding1D, MaxPooling1D, AveragePooling1D, Flatten, RepeatVector, TimeDistributed
 from tensorflow.keras import Input, Model
 import tensorflow_lattice as tfl
-from tensorflow.keras.callbacks import TensorBoard, ModelCheckpoint
 from tensorflow.keras.layers.experimental import preprocessing
 from tensorflow.keras.initializers import glorot_uniform
 from typing import Tuple
@@ -124,11 +123,11 @@ class RestNet1D(Model):
 class RNNEncoder(Model):
     def __init__(self, input_shape: Tuple) -> None:
        super(RNNEncoder, self).__init__()
-       self.input_shape = input_shape
+       self.input_data_shape = input_shape
        self.rnn_encoder_model = self.rnn_encoder_model() 
 
     def rnn_encoder_model(self):
-        X_input = Input(self.input_shape)
+        X_input = Input(self.input_data_shape)
         X = Bidirectional(LSTM(32, return_sequences = True))(X_input)
         X = Bidirectional(LSTM(32, return_sequences = True))(X)
         X = Dense(self.input_shape[0], activation='relu')(X)

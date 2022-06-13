@@ -28,5 +28,6 @@ class TFConsts:
     def __init__(self) -> None:
         self.data_preprocess_const = DataPreProcess
         self.model_for_training = ModelForTraining
+        self.training_hyperparameters = TrainingHyperparameters
 
     
