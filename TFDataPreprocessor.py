@@ -8,6 +8,7 @@ import os
 import pickle
 from typing import Tuple
 import TFConsts
+import glob
 
 
 class TFDataPreprocessor:
@@ -17,16 +18,16 @@ class TFDataPreprocessor:
         
     def load_data_from_drive(self):
         print(f'loading data from {self.dir}...')
-        with open(os.path.join(self.dir, 'train_all_features_dict*.pkl'), 'rb') as fn:
+        with open(glob.glob(os.path.join(self.dir, 'train_all_features_dict*.pkl'))[0], 'rb') as fn:
             self.train_data_dict = pickle.load(fn)
 
-        with open(os.path.join(self.dir, 'test_all_features_dict*.pkl'), 'rb') as fn:
+        with open(glob.glob(os.path.join(self.dir, 'test_all_features_dict*.pkl'))[0], 'rb') as fn:
             self.test_data_dict = pickle.load(fn)
 
-        with open(os.path.join(self.dir, 'train_all_labels_dict*.pkl'), 'rb') as fn:
+        with open(glob.glob(os.path.join(self.dir, 'train_all_labels_dict*.pkl'))[0], 'rb') as fn:
             self.train_label_dict = pickle.load(fn)
 
-        with open(os.path.join(self.dir, 'test_all_labels_dict*.pkl'), 'rb') as fn:
+        with open(glob.glob(os.path.join(self.dir, 'test_all_labels_dict*.pkl'))[0], 'rb') as fn:
             self.test_label_dict = pickle.load(fn)
             
     def normalize_data_by_first_point(self, data_dict: dict) -> dict:
