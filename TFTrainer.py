@@ -41,6 +41,12 @@ class TFTrainer:
                            metrics=self.tf_const.training_hyperparameters.METRICS.value)
         self.model.build(input_shape=self.train_data.shape)        
         self.model.summary()
+        # reset the model weights to prevent retraining the same model by using different folds of data
+        try:
+            self.model.load_weights('initial_weights.h5')
+        except Exception as exc:
+            print(f'Cannot load the initial weights {exc}')
+            self.model.save_weights('initial_weights.h5')
 
         early_stop = tf.keras.callbacks.EarlyStopping(
             monitor='val_loss', min_delta=0, patience=self.tf_const.training_hyperparameters.PATIENCE.value, verbose=0,
