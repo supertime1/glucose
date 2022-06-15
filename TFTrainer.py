@@ -8,10 +8,11 @@ import numpy as np
 from datetime import datetime
 import os
 import json
+from pathlib import Path
 
 
 class TFTrainer:
-    def __init__(self, train_data: np.array, train_label: np.array) -> None:
+    def __init__(self, train_data: np.array, train_label: np.array, output_dir: Path) -> None:
         self.train_data = train_data
         self.train_label = train_label
         self.input_shape = train_data.shape[1:]
@@ -26,7 +27,7 @@ class TFTrainer:
         if self.tf_const.model_for_training.RNN_ENCODER_DECODER.value:
             self.model = TFModels.RNNEncoderDecoder(self.input_shape, self.input_shape[0])
         
-        self.output_dir = os.path.join(os.path.curdir, 'logs', self.model.name) 
+        self.output_dir = os.path.join(output_dir, 'logs', self.model.name) 
         if not os.path.isdir(self.output_dir):
             os.makedirs(self.output_dir)
         
