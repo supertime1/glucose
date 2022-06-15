@@ -36,17 +36,21 @@ class TFTrainer:
         
     def train(self):
         tf.keras.backend.clear_session()
-        self.model.compile(optimizer=self.tf_const.training_hyperparameters.OPTIMIZER.value,
-                           loss=self.tf_const.training_hyperparameters.LOSS.value,
-                           metrics=self.tf_const.training_hyperparameters.METRICS.value)
-        self.model.build(input_shape=self.train_data.shape)        
-        self.model.summary()
         # reset the model weights to prevent retraining the same model by using different folds of data
         try:
             self.model.load_weights('initial_weights.h5')
+            print('reinitialized weights')
         except Exception as exc:
             print(f'Cannot load the initial weights {exc}')
-            self.model.save_weights('initial_weights.h5')
+            
+        self.model.compile(optimizer=self.tf_const.training_hyperparameters.OPTIMIZER.value,
+                           loss=self.tf_const.training_hyperparameters.LOSS.value,
+                           metrics=self.tf_const.training_hyperparameters.METRICS.value)
+        self.model.save_weights('initial_weights.h5')
+        self.model.build(input_shape=self.train_data.shape)        
+        self.model.summary()
+
+
 
         early_stop = tf.keras.callbacks.EarlyStopping(
             monitor='val_loss', min_delta=0, patience=self.tf_const.training_hyperparameters.PATIENCE.value, verbose=0,
@@ -54,13 +58,13 @@ class TFTrainer:
         
         tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=os.path.join(self.output_dir, self.tensorboard_log_dir), update_freq='batch', histogram_freq=1)
         self.history = self.model.fit(self.train_data, self.train_label,
-                                batch_size=self.tf_const.training_hyperparameters.BATCH_SIZE.value,
-                                steps_per_epoch=len(self.train_data) // self.tf_const.training_hyperparameters.BATCH_SIZE.value,
-                                epochs=self.tf_const.training_hyperparameters.EPOCH.value,
-                                verbose=1,
-                                validation_split=0.2,
-                                callbacks=[early_stop, tensorboard_callback]
-                                )
+                                        batch_size=self.tf_const.training_hyperparameters.BATCH_SIZE.value,
+                                        steps_per_epoch=len(self.train_data) // self.tf_const.training_hyperparameters.BATCH_SIZE.value,
+                                        epochs=self.tf_const.training_hyperparameters.EPOCH.value,
+                                        verbose=1,
+                                        validation_split=0.2,
+                                        callbacks=[early_stop, tensorboard_callback]
+                                        )
         
     def export_logs(self):
         # log data preprocessing steps
