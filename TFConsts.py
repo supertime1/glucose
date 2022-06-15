@@ -21,7 +21,7 @@ class TrainingHyperparameters(Enum):
     OPTIMIZER = tf.keras.optimizers.Adam(LEARNING_RATE)
     METRICS = ['mae']
     PATIENCE = 20
-    EPOCH = 1
+    EPOCH = 200
     BATCH_SIZE = 128
 
 class TFConsts:
