@@ -12,10 +12,11 @@ from pathlib import Path
 
 
 class TFTrainer:
-    def __init__(self, train_data: np.array, train_label: np.array, output_dir: Path) -> None:
+    def __init__(self, train_data: np.array, train_label: np.array, output_dir: Path, note='') -> None:
         self.train_data = train_data
         self.train_label = train_label
         self.input_shape = train_data.shape[1:]
+        self.note = note # add fold index here
         self.logs = {}
         self.training_begin_time = datetime.now().strftime("%Y%m%d-%H%M%S")
         # tensorboard directory saves all training history from all models under the same model name
@@ -37,20 +38,22 @@ class TFTrainer:
     def train(self):
         tf.keras.backend.clear_session()
         # reset the model weights to prevent retraining the same model by using different folds of data
+        weight_loaded = False
         try:
             self.model.load_weights('initial_weights.h5')
+            weight_loaded = True
             print('reinitialized weights')
         except Exception as exc:
+            weight_loaded = False
             print(f'Cannot load the initial weights {exc}')
             
         self.model.compile(optimizer=self.tf_const.training_hyperparameters.OPTIMIZER.value,
                            loss=self.tf_const.training_hyperparameters.LOSS.value,
                            metrics=self.tf_const.training_hyperparameters.METRICS.value)
-        self.model.save_weights('initial_weights.h5')
+        if not weight_loaded:
+            self.model.save_weights('initial_weights.h5')
         self.model.build(input_shape=self.train_data.shape)        
         self.model.summary()
-
-
 
         early_stop = tf.keras.callbacks.EarlyStopping(
             monitor='val_loss', min_delta=0, patience=self.tf_const.training_hyperparameters.PATIENCE.value, verbose=0,
@@ -77,6 +80,7 @@ class TFTrainer:
         self.logs['num_samples'] = self.train_data.shape[0]
         self.logs['input_shape'] = self.input_shape
         self.logs['output_shape'] = self.model.layers[-1].output_shape
+        self.logs['note'] = self.note
         
         # log training hyperparameters
         self.logs['learning_rate'] = self.tf_const.training_hyperparameters.LEARNING_RATE.value
@@ -93,9 +97,9 @@ class TFTrainer:
         
         # save json file
         jsonString = json.dumps(self.logs)
-        jsonFile = open(os.path.join(self.output_dir, self.training_begin_time, "training_logs.json"), "w")
+        jsonFile = open(os.path.join(self.output_dir, self.training_begin_time, f"training_logs_{self.note}.json"), "w")
         jsonFile.write(jsonString)
         jsonFile.close()
 
     def save_model(self):
-        self.model.encoder.save(os.path.join(self.output_dir, self.training_begin_time, self.model.name + '.h5'))
+        self.model.encoder.save(os.path.join(self.output_dir, self.training_begin_time, self.model.name + f'_{self.note}.h5'))

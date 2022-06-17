@@ -15,21 +15,36 @@ class TFDataPreprocessor:
     def __init__(self, dir: Path) -> None:
         self.dir = dir
         self.load_data_from_drive()
+        self.fold_idx = None
         
     def load_data_from_drive(self):
         print(f'loading data from {self.dir}...')
-        with open(glob.glob(os.path.join(self.dir, 'train_all_features_dict*.pkl'))[0], 'rb') as fn:
+        # sanity check if all feature and label are coming from the same fold
+        train_feature_path =  glob.glob(os.path.join(self.dir, 'train_all_features_dict*.pkl'))[0]
+        test_feature_path = glob.glob(os.path.join(self.dir, 'test_all_features_dict*.pkl'))[0]
+        train_label_path = glob.glob(os.path.join(self.dir, 'train_all_labels_dict*.pkl'))[0]
+        test_label_path = glob.glob(os.path.join(self.dir, 'test_all_labels_dict*.pkl'))[0]
+        
+        assert self._extract_fold_idx_from_filename(train_feature_path) == self._extract_fold_idx_from_filename(test_feature_path) == \
+                self._extract_fold_idx_from_filename(train_label_path) == self._extract_fold_idx_from_filename(test_label_path), 'double check if all data coming from some fold!'
+        self.fold_idx = self._extract_fold_idx_from_filename(train_feature_path)
+        
+        with open(train_feature_path, 'rb') as fn:
             self.train_data_dict = pickle.load(fn)
 
-        with open(glob.glob(os.path.join(self.dir, 'test_all_features_dict*.pkl'))[0], 'rb') as fn:
+        with open(test_feature_path, 'rb') as fn:
             self.test_data_dict = pickle.load(fn)
 
-        with open(glob.glob(os.path.join(self.dir, 'train_all_labels_dict*.pkl'))[0], 'rb') as fn:
+        with open(train_label_path, 'rb') as fn:
             self.train_label_dict = pickle.load(fn)
 
-        with open(glob.glob(os.path.join(self.dir, 'test_all_labels_dict*.pkl'))[0], 'rb') as fn:
+        with open(test_label_path, 'rb') as fn:
             self.test_label_dict = pickle.load(fn)
-            
+     
+    
+    def _extract_fold_idx_from_filename(filename: str) -> int:
+        return os.path.split(filename)[-1].split('_')[-1][:-4]
+                
     def normalize_data_by_first_point(self, data_dict: dict) -> dict:
         normalize_dict = {}
         for key, value in data_dict.items():

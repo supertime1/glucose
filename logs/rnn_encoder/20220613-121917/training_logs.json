@@ -1,1 +1,31 @@
-{"normalize_data_by_first_point": true, "normalize_data_by_zscore": false, "normalize_label_by_mean": true, "model": "rnn_encoder", "num_samples": 70038, "input_shape": [32, 19], "output_shape": [null, 32, 1], "learning_rate": 0.001, "loss_fucntion": "mean_squared_error", "metrics": ["mae"], "optimizer": "Adam", "patience": 20, "epoch": 1, "batch_size": 128, "loss": [0.026292968541383743], "val_loss": [0.0014526770683005452]}
+{
+    "normalize_data_by_first_point": true,
+    "normalize_data_by_zscore": false,
+    "normalize_label_by_mean": true,
+    "model": "rnn_encoder",
+    "num_samples": 70038,
+    "input_shape": [
+        32,
+        19
+    ],
+    "output_shape": [
+        null,
+        32,
+        1
+    ],
+    "learning_rate": 0.001,
+    "loss_fucntion": "mean_squared_error",
+    "metrics": [
+        "mae"
+    ],
+    "optimizer": "Adam",
+    "patience": 20,
+    "epoch": 1,
+    "batch_size": 128,
+    "loss": [
+        0.026292968541383743
+    ],
+    "val_loss": [
+        0.0014526770683005452
+    ]
+}
