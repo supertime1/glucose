@@ -167,7 +167,7 @@ class CNNEncoderDecoder(Model):
 
 
 class AutoEncoderTSML(Model):
-    def __init__(self, timesteps, n_features, latent_dim, dropout_rate=0.5):
+    def __init__(self, timesteps, n_features, latent_dim, dropout_rate=0.2):
         super(AutoEncoderTSML, self).__init__()
         self.latent_dim = latent_dim
         self.timesteps = timesteps
@@ -179,20 +179,20 @@ class AutoEncoderTSML(Model):
     def _rnn_encoder(self):
         Input_X = Input((self.timesteps, self.n_features))
         X = Dropout(self.dropout_rate)
-        X = LSTM(self.latent_dim * 4, activation='relu', return_sequences=True)(Input_X)
-        X = LSTM(self.latent_dim * 2, activation='relu', return_sequences=True)(X)
-        X = LSTM(self.latent_dim, activation='relu', return_sequences=False)(X)
+        X = LSTM(self.latent_dim * 4, return_sequences=True)(Input_X)
+        X = LSTM(self.latent_dim * 2, return_sequences=True)(X)
+        X = LSTM(self.latent_dim, return_sequences=False)(X)
         X = RepeatVector(self.timesteps)(X)
-        model = Model(Input_X, X)
+        model = Model(Input_X, X, name='lstm_encoder')
         return model
 
     def _rnn_decoder(self):
         Input_X = Input((self.timesteps, self.latent_dim))
-        X = LSTM(self.latent_dim, activation='relu', return_sequences=True)(Input_X)
-        X = LSTM(self.latent_dim * 2, activation='relu', return_sequences=True)(X)
-        X = LSTM(self.latent_dim * 4, activation='relu', return_sequences=True)(X)
-        X = TimeDistributed(Dense(self.n_features))(X)
-        model = Model(Input_X, X)
+        X = LSTM(self.latent_dim, return_sequences=True)(Input_X)
+        X = LSTM(self.latent_dim * 2, return_sequences=True)(X)
+        X = LSTM(self.latent_dim * 4, return_sequences=True)(X)
+        X = TimeDistributed(Dense(self.n_features, activation='sigmoid'))(X)
+        model = Model(Input_X, X, name='lstm_decoder')
         return model
     
     def call(self, x):
