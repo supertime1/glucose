@@ -14,8 +14,8 @@ import glob
 class TFDataPreprocessor:
     def __init__(self, dir: Path) -> None:
         self.dir = dir
-        self.load_data_from_drive()
         self.fold_idx = None
+        self.load_data_from_drive()
         
     def load_data_from_drive(self):
         print(f'loading data from {self.dir}...')
