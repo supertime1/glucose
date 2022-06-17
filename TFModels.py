@@ -167,16 +167,18 @@ class CNNEncoderDecoder(Model):
 
 
 class AutoEncoderTSML(Model):
-    def __init__(self, timesteps, n_features, latent_dim):
+    def __init__(self, timesteps, n_features, latent_dim, dropout_rate=0.5):
         super(AutoEncoderTSML, self).__init__()
         self.latent_dim = latent_dim
         self.timesteps = timesteps
         self.n_features = n_features
+        self.dropout_rate = dropout_rate
         self.encoder = self._rnn_encoder()
         self.decoder = self._rnn_decoder()
 
     def _rnn_encoder(self):
         Input_X = Input((self.timesteps, self.n_features))
+        X = Dropout(self.dropout_rate)
         X = LSTM(self.latent_dim * 4, activation='relu', return_sequences=True)(Input_X)
         X = LSTM(self.latent_dim * 2, activation='relu', return_sequences=True)(X)
         X = LSTM(self.latent_dim, activation='relu', return_sequences=False)(X)

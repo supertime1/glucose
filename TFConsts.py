@@ -11,8 +11,8 @@ class DataPreProcess(Enum):
 
 
 class ModelForTraining(Enum):
-    RNN_ENCODER = True
-    AUTO_ENCODER_TSML = False
+    RNN_ENCODER = False
+    AUTO_ENCODER_TSML = True
     RNN_ENCODER_DECODER = False
 
 class TrainingHyperparameters(Enum):
