@@ -42,7 +42,7 @@ class TFDataPreprocessor:
             self.test_label_dict = pickle.load(fn)
      
     
-    def _extract_fold_idx_from_filename(filename: str) -> int:
+    def _extract_fold_idx_from_filename(self, filename: str) -> int:
         return os.path.split(filename)[-1].split('_')[-1][:-4]
                 
     def normalize_data_by_first_point(self, data_dict: dict) -> dict:
