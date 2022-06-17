@@ -17,8 +17,8 @@ class ModelForTraining(Enum):
 
 class TrainingHyperparameters(Enum):
     LEARNING_RATE = 0.001
-    # LOSS = tf.keras.losses.MeanSquaredError()
-    LOSS = tf.keras.losses.BinaryCrossentropy()
+    LOSS = tf.keras.losses.MeanSquaredError()
+    # LOSS = tf.keras.losses.BinaryCrossentropy()
     OPTIMIZER = tf.keras.optimizers.Adam(LEARNING_RATE)
     METRICS = ['mae']
     PATIENCE = 20
