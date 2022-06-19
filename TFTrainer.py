@@ -28,7 +28,7 @@ class TFTrainer:
         if self.tf_const.model_for_training.RNN_ENCODER_DECODER.value:
             self.model = TFModels.RNNEncoderDecoder(self.input_shape, self.input_shape[0])
         if self.tf_const.model_for_training.AUTO_ENCODER_TSML.value:
-            self.model = TFModels.AutoEncoderTSML(self.input_shape[0], self.input_shape[1], 8)
+            self.model = TFModels.AutoEncoderTSML(self.input_shape[0], self.input_shape[1], 4)
         
         self.output_dir = os.path.join(output_dir, 'logs', self.model.name) 
         if not os.path.isdir(self.output_dir):

@@ -167,7 +167,7 @@ class CNNEncoderDecoder(Model):
 
 
 class AutoEncoderTSML(Model):
-    def __init__(self, timesteps, n_features, latent_dim, dropout_rate=0.2):
+    def __init__(self, timesteps, n_features, latent_dim, dropout_rate=0.5):
         super(AutoEncoderTSML, self).__init__()
         self.latent_dim = latent_dim
         self.timesteps = timesteps
