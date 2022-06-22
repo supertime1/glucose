@@ -181,16 +181,16 @@ class AutoEncoderTSML(Model):
         X = Dropout(self.dropout_rate)
         X = LSTM(self.latent_dim * 16, return_sequences=True)(Input_X)
         X = LSTM(self.latent_dim * 4, return_sequences=True)(X)
-        X = LSTM(self.latent_dim, return_sequences=False)(X)
-        X = RepeatVector(self.timesteps)(X)
+        X = LSTM(self.latent_dim, return_sequences=True)(X)
+        # X = RepeatVector(self.timesteps)(X)
         model = Model(Input_X, X, name='lstm_encoder')
         return model
 
     def _rnn_decoder(self):
         Input_X = Input((self.timesteps, self.latent_dim))
         X = LSTM(self.latent_dim, return_sequences=True)(Input_X)
-        X = LSTM(self.latent_dim * 16, return_sequences=True)(X)
         X = LSTM(self.latent_dim * 4, return_sequences=True)(X)
+        X = LSTM(self.latent_dim * 16, return_sequences=True)(X)
         X = TimeDistributed(Dense(self.n_features, activation='selu'))(X)
         model = Model(Input_X, X, name='lstm_decoder')
         return model
@@ -199,5 +199,3 @@ class AutoEncoderTSML(Model):
         encoded = self.encoder(x)
         decoded = self.decoder(encoded)
         return decoded
-
-

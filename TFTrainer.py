@@ -20,7 +20,7 @@ class TFTrainer:
         self.logs = {}
         self.training_begin_time = datetime.now().strftime("%Y%m%d-%H%M%S")
         # tensorboard directory saves all training history from all models under the same model name
-        self.tensorboard_log_dir = "tensorboard/fit/" + self.training_begin_time
+        self.tensorboard_log_dir = os.path.join("logs", self.training_begin_time)
         self.tf_const = TFConsts()
         
         if self.tf_const.model_for_training.RNN_ENCODER.value:
