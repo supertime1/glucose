@@ -26,7 +26,7 @@ class TFTrainer:
         if self.tf_const.model_for_training.RNN_ENCODER:
             self.model = TFModels.RNNEncoder(self.input_shape)
         if self.tf_const.model_for_training.RNN_ENCODER_DECODER:
-            self.model = TFModels.RNNEncoderDecoder(self.input_shape, self.input_shape[0])
+            self.model = TFModels.RNNEncoderDecoder(self.input_shape)
         if self.tf_const.model_for_training.AUTO_ENCODER_TSML:
             self.model = TFModels.AutoEncoderTSML(self.input_shape[0], self.input_shape[1], 4)
             self.train_label = self.train_data
@@ -43,21 +43,24 @@ class TFTrainer:
         tf.keras.backend.clear_session()
         # reset the model weights to prevent retraining the same model by using different folds of data
         weight_loaded = False
-        try:
+        
+        # load empty weights to guanrantee a fresh training during cross validation loop
+        if weight_loaded:
             self.model.load_weights('initial_weights.h5')
             weight_loaded = True
             print('reinitialized weights')
-        except Exception as exc:
-            weight_loaded = False
-            print(f'Cannot load the initial weights {exc}')
             
         self.model.compile(optimizer=self.tf_const.training_hyperparameters.OPTIMIZER,
                            loss=self.tf_const.training_hyperparameters.LOSS,
                            metrics=self.tf_const.training_hyperparameters.METRICS)
-        if not weight_loaded:
-            self.model.save_weights('initial_weights.h5')
+
+            
         self.model.build(input_shape=self.train_data.shape)        
         self.model.summary()
+        
+        if not weight_loaded:
+            self.model.save_weights('initial_weights.h5')
+            print('Saving initial weights')
 
         early_stop = tf.keras.callbacks.EarlyStopping(
             monitor='val_loss', min_delta=0, patience=self.tf_const.training_hyperparameters.PATIENCE, verbose=0,
@@ -107,4 +110,8 @@ class TFTrainer:
         jsonFile.close()
 
     def save_model(self):
-        self.model.encoder.save(os.path.join(self.output_dir, self.training_begin_time, self.model.name + f'_{self.note}.h5'))
+        try:
+            self.model.encoder.save(os.path.join(self.output_dir, self.training_begin_time, self.model.name + f'_{self.note}.h5'))
+        except Exception as exc:
+            print(f'exception {exc}')
+            self.model.encoder.encoder.save(os.path.join(self.output_dir, self.training_begin_time, self.model.name + f'_{self.note}.h5'))

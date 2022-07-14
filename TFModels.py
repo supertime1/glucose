@@ -121,16 +121,17 @@ class RestNet1D(Model):
     
 
 class RNNEncoder(Model):
-    def __init__(self, input_shape: Tuple) -> None:
+    def __init__(self, input_shape: Tuple, latent_dim=8) -> None:
        super(RNNEncoder, self).__init__()
        self.input_data_shape = input_shape
+       self.latent_dim = latent_dim
        self.encoder = self.rnn_encoder_model() 
 
     def rnn_encoder_model(self):
         X_input = Input(self.input_data_shape)
-        X = Bidirectional(LSTM(32, return_sequences=True))(X_input)
-        X = Bidirectional(LSTM(32, return_sequences=True))(X)
-        X = Dense(1, activation='relu')(X)
+        X = LSTM(32, return_sequences=True)(X_input)
+        X = LSTM(32, return_sequences=True)(X)
+        X = TimeDistributed(Dense(self.latent_dim, activation='relu'))(X)
         model = Model(inputs=X_input, outputs=X, name='RNNEncoder')
         return model
     
@@ -138,13 +139,15 @@ class RNNEncoder(Model):
         return self.encoder(x)
     
 class RNNEncoderDecoder(Model):
-  def __init__(self, latent_dim, num_of_labels):
+  def __init__(self, input_shape: Tuple, latent_dim=8):
     super(RNNEncoderDecoder, self).__init__()
-    self.latent_dim = latent_dim   
-    self.encoder = RNNEncoder(self.latent_dim)
+    self.input_dim = input_shape   
+    self.latent_dim = latent_dim
+    self.encoder = RNNEncoder(self.input_dim, self.latent_dim)
+    # add a linear layer which is expected to be replaced by a linear layer in tsml
     self.decoder = tf.keras.Sequential([
-        Dense(num_of_labels, activation='relu'),
-    ])
+        TimeDistributed(Dense(1, activation='linear'))])
+
 
   def call(self, x):
     encoded = self.encoder(x)

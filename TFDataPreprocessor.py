@@ -45,7 +45,7 @@ class TFDataPreprocessor:
     def _extract_fold_idx_from_filename(self, filename: str) -> int:
         return os.path.split(filename)[-1].split('_')[-1][:-4]
                 
-    def normalize_data_by_first_point(self, data_dict: dict) -> dict:
+    def normalize_data_by_mean(self, data_dict: dict) -> dict:
         normalize_dict = {}
         for key, value in data_dict.items():
             if len(value) == 0: continue
@@ -69,8 +69,8 @@ class TFDataPreprocessor:
     
     def process(self, augument=True, shuffle=True) -> Tuple[dict, dict, dict, dict]:
         if TFConsts.DataPreProcess.DATA_NORM_BY_FIRST_POINT:
-            norm_train_data_dict = self.normalize_data_by_first_point(self.train_data_dict)
-            norm_test_data_dict = self.normalize_data_by_first_point(self.test_data_dict)
+            norm_train_data_dict = self.normalize_data_by_mean(self.train_data_dict)
+            norm_test_data_dict = self.normalize_data_by_mean(self.test_data_dict)
             
         if TFConsts.DataPreProcess.DATA_NORM_BY_ZSCORE:
             norm_train_data_dict = self.normalize_data_by_zscore(self.train_data_dict)

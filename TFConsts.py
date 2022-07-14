@@ -5,15 +5,15 @@ import tensorflow as tf
 
 
 class DataPreProcess:
-    DATA_NORM_BY_FIRST_POINT = True
-    DATA_NORM_BY_ZSCORE = False
+    DATA_NORM_BY_FIRST_POINT = False
+    DATA_NORM_BY_ZSCORE = True
     LABEL_NORM_BY_MEAN = True
 
 
 class ModelForTraining:
     RNN_ENCODER = False
-    AUTO_ENCODER_TSML = True
-    RNN_ENCODER_DECODER = False
+    AUTO_ENCODER_TSML = False
+    RNN_ENCODER_DECODER = True
 
 class TrainingHyperparameters:
     LEARNING_RATE = 0.001
